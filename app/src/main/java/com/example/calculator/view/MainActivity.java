@@ -1,11 +1,9 @@
 package com.example.calculator.view;
 
-import static android.content.ContentValues.TAG;
-
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.CompoundButton;
+import android.widget.ToggleButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -36,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // all the event listeners for each button
         binding.ac.setOnClickListener(this);
-        binding.plusMinus.setOnClickListener(this);
+        binding.togglebutton.setOnClickListener(this);
         binding.modulo.setOnClickListener(this);
         binding.division.setOnClickListener(this);
         binding.seven.setOnClickListener(this);
@@ -58,8 +56,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-//        String logg = binding.display.getText().toString();
-//        String toPut = "here is the zero " + logg;
+        String str = binding.display.getText().toString();
+//        String toPut = "here is the zero " + str;
 //                Log.d(TAG,toPut);
         int id = view.getId();
 
@@ -67,16 +65,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            binding.display.setText("");
 //        };
 
-        if ("0".equals(binding.display.getText().toString())) {
+        if ("0".equals(str)) {
             binding.display.setText("");
         }
         if (id == R.id.ac) binding.display.setText(R.string.zero);
-        else if (id == R.id.plusMinus)
-            binding.display.append(getResources().getString(R.string.minus));
-        else if (id == R.id.modulo)
-            binding.display.append(getResources().getString(R.string.modulo));
-        else if (id == R.id.division)
-            binding.display.append(getResources().getString(R.string.division));
+
+        // figure out how to use with the zero and the AC
+        else if (id == R.id.togglebutton) {
+            ToggleButton toggle = (ToggleButton) findViewById(id);
+            toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    StringBuilder newStr = new StringBuilder(binding.display.getText().toString());
+                    if (isChecked) {
+                        newStr.insert(0,"-");
+                    } else {
+                        newStr.deleteCharAt(0);
+                    }
+                    binding.display.setText(newStr);
+                }
+            });
+        }
+        else if (id == R.id.modulo) binding.display.append(getResources().getString(R.string.modulo));
+        else if (id == R.id.division) binding.display.append(getResources().getString(R.string.division));
         else if (id == R.id.seven) binding.display.append(getResources().getString(R.string.seven));
         else if (id == R.id.eight) binding.display.append(getResources().getString(R.string.eight));
         else if (id == R.id.nine) binding.display.append(getResources().getString(R.string.nine));
