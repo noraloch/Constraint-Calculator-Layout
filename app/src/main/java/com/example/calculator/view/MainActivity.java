@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        String TAG = "currentDisplay";
+        String TAG = "zero to appear";
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -53,15 +53,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         binding.plus.setOnClickListener(this);
         binding.zero.setOnClickListener(this);
         binding.dot.setOnClickListener(this);
-//        Log.v(TAG, currentDisplay);
         binding.equal.setOnClickListener(view -> viewModel.equal(binding.display.getText().toString()));
     }
 
     @Override
     public void onClick(View view) {
+//        String logg = binding.display.getText().toString();
+//        String toPut = "here is the zero " + logg;
+//                Log.d(TAG,toPut);
         int id = view.getId();
-//        String sevStr = getResources().getString(R.string.seven);
 
+//        if (binding.display.getText().toString() == "0" ) {
+//            binding.display.setText("");
+//        };
+
+        if ("0".equals(binding.display.getText().toString())) {
+            binding.display.setText("");
+        }
         if (id == R.id.ac) binding.display.setText(R.string.zero);
         else if (id == R.id.plusMinus)
             binding.display.append(getResources().getString(R.string.minus));
