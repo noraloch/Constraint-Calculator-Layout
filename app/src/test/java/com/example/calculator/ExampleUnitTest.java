@@ -1,4 +1,4 @@
-package com.example.constraintcalculatorlayout;
+package com.example.calculator;
 
 import org.junit.Test;
 
