@@ -2,21 +2,26 @@ package com.example.calculator.view;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.CompoundButton;
+import android.widget.ToggleButton;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.calculator.R;
 import com.example.calculator.databinding.ActivityMainBinding;
+import com.example.calculator.viewmodel.MainViewModel;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ActivityMainBinding binding;
-    private TextView current;
+
+    private MainViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        String TAG = "zero to appear";
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -24,9 +29,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(binding.getRoot());
         binding.display.setText(R.string.zero);
 
+        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        viewModel.getDisplayString().observe(this, s -> binding.display.setText(s));
+
         // all the event listeners for each button
         binding.ac.setOnClickListener(this);
-        binding.plusMinus.setOnClickListener(this);
+        binding.togglebutton.setOnClickListener(this);
         binding.modulo.setOnClickListener(this);
         binding.division.setOnClickListener(this);
         binding.seven.setOnClickListener(this);
@@ -43,20 +51,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         binding.plus.setOnClickListener(this);
         binding.zero.setOnClickListener(this);
         binding.dot.setOnClickListener(this);
-        binding.equal.setOnClickListener(this);
+        binding.equal.setOnClickListener(view -> viewModel.equal(binding.display.getText().toString()));
     }
 
     @Override
     public void onClick(View view) {
+        String str = binding.display.getText().toString();
+//        String toPut = "here is the zero " + str;
+//                Log.d(TAG,toPut);
         int id = view.getId();
-        current = (TextView) binding.display;
-//        String sevStr = getResources().getString(R.string.seven);
 
+//        if (binding.display.getText().toString() == "0" ) {
+//            binding.display.setText("");
+//        };
+
+        if ("0".equals(str)) {
+            binding.display.setText("");
+        }
         if (id == R.id.ac) binding.display.setText(R.string.zero);
-        else if (id == R.id.plusMinus) binding.display.append(getResources().getString(R.string.minus));
+
+        // figure out how to use with the zero and the AC
+        else if (id == R.id.togglebutton) {
+            ToggleButton toggle = (ToggleButton) findViewById(id);
+            toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    StringBuilder newStr = new StringBuilder(binding.display.getText().toString());
+                    if (isChecked) {
+                        newStr.insert(0,"-");
+                    } else {
+                        newStr.deleteCharAt(0);
+                    }
+                    binding.display.setText(newStr);
+                }
+            });
+        }
         else if (id == R.id.modulo) binding.display.append(getResources().getString(R.string.modulo));
         else if (id == R.id.division) binding.display.append(getResources().getString(R.string.division));
-        else if (id == R.id.seven) current.append(getResources().getString(R.string.seven));
+        else if (id == R.id.seven) binding.display.append(getResources().getString(R.string.seven));
         else if (id == R.id.eight) binding.display.append(getResources().getString(R.string.eight));
         else if (id == R.id.nine) binding.display.append(getResources().getString(R.string.nine));
         else if (id == R.id.multi) binding.display.append(getResources().getString(R.string.multi));
@@ -70,6 +101,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         else if (id == R.id.plus) binding.display.append(getResources().getString(R.string.plus));
         else if (id == R.id.zero) binding.display.append(getResources().getString(R.string.zero));
         else if (id == R.id.dot) binding.display.append(getResources().getString(R.string.dot));
-        else if (id == R.id.equal) binding.display.append(getResources().getString(R.string.equal));
     }
 }
