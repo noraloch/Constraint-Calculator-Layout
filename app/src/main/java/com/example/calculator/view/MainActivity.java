@@ -1,28 +1,38 @@
 package com.example.calculator.view;
 
+import static android.content.ContentValues.TAG;
+
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.calculator.R;
 import com.example.calculator.databinding.ActivityMainBinding;
+import com.example.calculator.viewmodel.MainViewModel;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ActivityMainBinding binding;
-    private TextView current;
+
+    private MainViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        String TAG = "currentDisplay";
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         binding.display.setText(R.string.zero);
+
+        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        viewModel.getDisplayString().observe(this, s -> binding.display.setText(s));
 
         // all the event listeners for each button
         binding.ac.setOnClickListener(this);
@@ -43,20 +53,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         binding.plus.setOnClickListener(this);
         binding.zero.setOnClickListener(this);
         binding.dot.setOnClickListener(this);
-        binding.equal.setOnClickListener(this);
+//        Log.v(TAG, currentDisplay);
+        binding.equal.setOnClickListener(view -> viewModel.equal(binding.display.getText().toString()));
     }
 
     @Override
     public void onClick(View view) {
         int id = view.getId();
-        current = (TextView) binding.display;
 //        String sevStr = getResources().getString(R.string.seven);
 
         if (id == R.id.ac) binding.display.setText(R.string.zero);
-        else if (id == R.id.plusMinus) binding.display.append(getResources().getString(R.string.minus));
-        else if (id == R.id.modulo) binding.display.append(getResources().getString(R.string.modulo));
-        else if (id == R.id.division) binding.display.append(getResources().getString(R.string.division));
-        else if (id == R.id.seven) current.append(getResources().getString(R.string.seven));
+        else if (id == R.id.plusMinus)
+            binding.display.append(getResources().getString(R.string.minus));
+        else if (id == R.id.modulo)
+            binding.display.append(getResources().getString(R.string.modulo));
+        else if (id == R.id.division)
+            binding.display.append(getResources().getString(R.string.division));
+        else if (id == R.id.seven) binding.display.append(getResources().getString(R.string.seven));
         else if (id == R.id.eight) binding.display.append(getResources().getString(R.string.eight));
         else if (id == R.id.nine) binding.display.append(getResources().getString(R.string.nine));
         else if (id == R.id.multi) binding.display.append(getResources().getString(R.string.multi));
@@ -70,6 +83,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         else if (id == R.id.plus) binding.display.append(getResources().getString(R.string.plus));
         else if (id == R.id.zero) binding.display.append(getResources().getString(R.string.zero));
         else if (id == R.id.dot) binding.display.append(getResources().getString(R.string.dot));
-        else if (id == R.id.equal) binding.display.append(getResources().getString(R.string.equal));
     }
 }
